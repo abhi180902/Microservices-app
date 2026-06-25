@@ -1,8 +1,11 @@
 package com.brave.quiz.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.brave.quiz.dao.QuestionDao;
@@ -14,23 +17,42 @@ public class QuestionService {
 	@Autowired
 	QuestionDao questionDao;
 
-	public List<Question> getAllQuestions() {
-		
-		return questionDao.findAll();
+	public ResponseEntity<List<Question>> getAllQuestions() {
+		try {
+			return new ResponseEntity<>(questionDao.findAll(), HttpStatus.OK);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
 	}
 
-	public List<Question> getQuestionsByCategory(String category) {
-		return questionDao.findByCategory(category);
+	public ResponseEntity<List<Question>> getQuestionsByCategory(String category) {
+		try {
+			return new ResponseEntity<>(questionDao.findByCategory(category), HttpStatus.OK);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
 	}
 
-	public String addQuestion(Question question) {
-		questionDao.save(question);
-		return "success";
+	public ResponseEntity<String> addQuestion(Question question) {
+		try {
+			questionDao.save(question);
+			return new ResponseEntity<String>("Success", HttpStatus.CREATED);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<String>("", HttpStatus.BAD_REQUEST);
 	}
 	
-	public String deleteQuestions(Integer id) {
-		questionDao.deleteById(id);
-		return "questions deleted";
+	public ResponseEntity<String> deleteQuestions(Integer id) {
+		try {
+			questionDao.deleteById(id);
+			return new ResponseEntity<String>("questions deleted",HttpStatus.ACCEPTED);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<String>("",HttpStatus.NO_CONTENT);
 	}
 
 }
